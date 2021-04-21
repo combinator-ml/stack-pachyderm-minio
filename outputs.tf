@@ -11,7 +11,7 @@ output "MINIO_ROOT_USER" {
 
 output "MINIO_ROOT_PASSWORD" {
   description = "Minio root password"
-  value       = module.minio.MINIO_ROOT_PASSWORD
+  value       = nonsensitive(module.minio.MINIO_ROOT_PASSWORD)
 }
 
 output "CONSOLE_ACCESS_KEY" {
@@ -21,5 +21,5 @@ output "CONSOLE_ACCESS_KEY" {
 
 output "CONSOLE_SECRET_KEY" {
   description = "Minio console password"
-  value       = module.minio.CONSOLE_SECRET_KEY
+  value       = nonsensitive(module.minio.CONSOLE_SECRET_KEY)
 }

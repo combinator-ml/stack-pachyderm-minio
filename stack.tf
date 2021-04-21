@@ -12,7 +12,8 @@ terraform {
 }
 
 module "minio" {
-  source        = "../minio"
+  source        = "combinator-ml/minio/k8s"
+  version       = "0.0.2"
   enable_tenant = true
 }
 
@@ -108,7 +109,8 @@ EOT
 }
 
 module "pachyderm" {
-  source = "../pachyderm"
+  source  = "combinator-ml/pachyderm/k8s"
+  version = "0.0.1"
   values = [<<EOT
 tls:
   certName: null # Disable TLS

@@ -4,14 +4,7 @@ Combinator.ml stack comprising of [Pachyderm](https://github.com/combinator-ml/t
 
 ## Usage
 
-```terraform
-module "pachyderm-minio-stack" {
-  source  = "combinator-ml/pachyderm-minio-stack/k8s"
-  version = "0.0.0"
-}
-```
-
-See the full configuration options below.
+This could be used as a module, but it is intended as a self-contained stack.
 
 ### Stack Creation
 
@@ -31,6 +24,14 @@ KUBE_CONFIG_PATH=~/.kube/config terraform destroy
 
 I found that hardcoding the kubeconfig led to [this terraform bug](https://github.com/terraform-aws-modules/terraform-aws-eks/issues/1234).
 
+- Left over `CertificateSigningRequests`
+
+If you see errors about pods not being able to mouht TLS secrets, it's probably because it's trying to reuse an old set of secrets set up in a previous CertificateSigningRequest. Delete all the old CertificateSigningRequests and try again.
+
+```bash
+kubectl delete certificatesigningrequests.certificates.k8s.io minio-tenant-default-csr minio-tenant-console-default-csr
+```
+
 ## Requirements
 
 | Name | Version |
@@ -48,8 +49,8 @@ I found that hardcoding the kubeconfig led to [this terraform bug](https://githu
 
 | Name | Source | Version |
 |------|--------|---------|
-| minio | ../minio |  |
-| pachyderm | ../pachyderm |  |
+| minio | combinator-ml/minio/k8s | 0.0.2 |
+| pachyderm | combinator-ml/pachyderm/k8s | 0.0.1 |
 
 ## Resources
 

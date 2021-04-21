@@ -4,7 +4,7 @@ on:
     paths:
     - '**.tf'
 env:
-  TF_CHDIR: -chdir=examples/basic
+  TF_CHDIR: -chdir=.
 jobs:
   tests:
     name: test

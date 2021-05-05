@@ -1,0 +1,59 @@
+name: Pachyderm + Minio
+base:
+  kernel_image: quay.io/testfaster/ignite-kernel
+  os_dockerfile: |-
+    # This dockerfile defines the base disk image for your VMs
+    FROM quay.io/testfaster/kube-ubuntu
+    RUN apt update
+    RUN apt install gnupg2 software-properties-common rsync -y
+    RUN curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
+    RUN apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+    RUN apt install terraform -y
+
+  preload_docker_images:
+    # Needed after initial startup
+    - alpine:latest
+    # NB: use:
+    #     testctl ssh --tty=false -- docker images --format "{{.Repository}}:{{.Tag}}" |sort |sed 's/^/    - /g'
+    # and then remove ':<none>' tags
+    # to refresh this list
+
+
+  prewarm_script: |-
+    # This gets run after each individual VM starts up, so
+    # start services you need in your tests here and they'll be
+    # already running when you testctl get
+    #!/bin/bash
+    set -euo pipefail
+    git clone https://github.com/combinator-ml/terraform-k8s-stack-pachyderm-minio repo
+    cd repo
+    git fetch --all --tags
+    git checkout tags/0.0.0 -b working
+    terraform init
+    terraform apply -auto-approve
+
+  # Need kube 1.17 for kubeflow last time I checked (1.18 doesn't work).
+  # https://github.com/kubeflow/kubeflow/issues/5246#issuecomment-682013220
+  kubernetes_version: v1.17.11
+runtime:
+  cpus: 8
+  memory: 16GB
+  disk: 50GB
+# How many ready VMs to keep running for instant testctl get
+prewarm_pool_size: 2
+# Upper bound for pool size, e.g. to keep memory usage sensible
+max_pool_size: 16
+# Timeout VMs after this long. Set to "" if you want to use
+# the VMs for long running development purposes rather than
+# short-lived CI.
+default_lease_timeout: "1h"
+pool_sleep_timeout: "7d"
+
+launch:
+  title: Pachyderm + Minio
+  buttons:
+    - title: Minio
+      port: 9090
+  homepage: |
+    ## Follow the tutorial below
+    Click the buttons above.

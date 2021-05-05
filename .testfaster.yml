@@ -48,7 +48,8 @@ max_pool_size: 16
 # short-lived CI.
 default_lease_timeout: "1h"
 pool_sleep_timeout: "7d"
-
+# enable multiple users to re-use the same pool
+shared: true
 launch:
   title: Pachyderm + Minio
   buttons:
